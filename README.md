@@ -1,7 +1,14 @@
 # Hospital_pro
 
+def generate_random_id():
+    prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
+    digits = ''.join(random.choices(string.digits, k=6))
+    return f"{prefix}{digits}"
+
+def generate_current_date():
+    return datetime.today().strftime('%Y-%m-%d')
+
 def collect_data():
-    # Assuming you have radio buttons for gender
     if male_radio.isChecked():
         gender = "Male"
     elif female_radio.isChecked():
@@ -11,7 +18,6 @@ def collect_data():
     else:
         gender = "Not specified"
     
-    # Assuming the blood group is selected from a dropdown
     blood_group = blood_group_dropdown.currentText()
 
     patient_data = {
