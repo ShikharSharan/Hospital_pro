@@ -1,9 +1,11 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout,QRadioButton,QComboBox
 from PyQt5.QtCore import Qt
 import random
-import datetime
+from datetime import datetime
 import string
+#from email_validator import validate_email, EmailNotValidError
+import re
 def generate_random_id():
     prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
     digits = ''.join(random.choices(string.digits, k=6))
@@ -13,25 +15,36 @@ def generate_current_date():
     return datetime.today().strftime('%Y-%m-%d')
 
 def collect_data():
+    if Male_button.isChecked():
+        gender = "Male"
+    elif Female_button.isChecked():
+        gender = "Female"
+    elif Other_button.isChecked():
+        gender = "Others"
+    else:
+        gender = "Not specified"
+    
+    blood_group = Blood_group_input.currentText()
+
     patient_data = {
         "Patient_ID": generate_random_id(),
         "Patient_FName": Patient_Fname_input.text(),
         "Patient_LName": Patient_lname_input.text(),
         "Phone": Phone_number_input.text(),
-        "Blood_Type": Blood_group_input.text(),
+        "Blood_Type": blood_group,
         "Email": email_input.text(),
-        "Gender": Gender_input.text(),
+        "Gender": gender,
         "Password": create_password_input.text(),
         "Admission_Date": generate_current_date(),
     }
-    print(patient_data)  # This is where you'd handle further processing (e.g., saving to a database)
-
+    print(patient_data)
 #create_button.clicked.connect(on_create_button_click)
 
 def on_create_button_click():
     # Check if any field is empty
     if not (Patient_Fname_input.text() and Patient_lname_input.text() and Phone_number_input.text() and 
-            Blood_group_input.text() and Gender_input.text() and email_input.text() and 
+            Blood_group_input.currentText()  #and email_input.text()
+            and 
             create_password_input.text() and confirm_password_input.text()):
         space_button.setText("Input Error: All fields are required.")
         return
@@ -46,9 +59,19 @@ def on_create_button_click():
         space_button.setText("Input Error:  Passwords do not match.")
         return
     
-
+    #email validation
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+    if(re.fullmatch(regex, email_input.text())):
+        pass
+ 
+    else:
+        space_button.setText("Invalid email")
+        return
+    #if not check(email_input.text()):
+    
     #create_button.clicked.connect(collect_data)
     collect_data()
+    print("snheal")
     space_button.setText("Success:  Account created successfully!")
 
 
@@ -66,7 +89,7 @@ label.setAlignment(Qt.AlignCenter)
 login_layout.addWidget(label)
 
 username_layout = QHBoxLayout()
-username_label = QLabel('Username:')
+username_label = QLabel('Patient_ID:')
 username_layout.addWidget(username_label)
 
 username_input = QLineEdit()
@@ -129,8 +152,9 @@ signup_layout.addSpacing(20)
 Blood_group_layout = QHBoxLayout()
 Blood_group_label = QLabel('Blood Group')
 Blood_group_layout.addWidget(Blood_group_label)
-Blood_group_input = QLineEdit()
-Blood_group_input.setFixedSize(300, 20)
+Blood_group_input = QComboBox()
+Blood_group_input.addItems(['','O+','O-','A+','A-','B+','B-','AB+','AB-'])
+Blood_group_input.setFixedSize(300,20)
 Blood_group_layout.addWidget(Blood_group_input)
 signup_layout.addLayout(Blood_group_layout)
 signup_layout.addSpacing(20)
@@ -138,10 +162,14 @@ signup_layout.addSpacing(20)
 Gender_layout = QHBoxLayout()
 Gender_label = QLabel('Gender')
 Gender_layout.addWidget(Gender_label)
-Gender_input = QLineEdit()
-Gender_input.setFixedSize(300, 20)
-Gender_layout.addWidget(Gender_input)
+Male_button = QRadioButton('Male')
+Gender_layout.addWidget(Male_button)
+Female_button = QRadioButton('Female')
+Gender_layout.addWidget(Female_button)
+Other_button = QRadioButton('Others')
+Gender_layout.addWidget(Other_button)
 signup_layout.addLayout(Gender_layout)
+
 signup_layout.addSpacing(20)
 
 email_layout = QHBoxLayout()
@@ -167,6 +195,7 @@ confirm_password_layout = QHBoxLayout()
 confirm_password_label = QLabel('Confirm_Password:')
 confirm_password_layout.addWidget(confirm_password_label)
 confirm_password_input = QLineEdit()
+confirm_password_input.setEchoMode(QLineEdit.Password)
 confirm_password_input.setFixedSize(300, 20)
 confirm_password_layout.addWidget(confirm_password_input)
 signup_layout.addLayout(confirm_password_layout)
@@ -196,3 +225,4 @@ window.setLayout(main_layout)
 if __name__ == "__main__":
     window.show()
     sys.exit(app.exec_())
+
