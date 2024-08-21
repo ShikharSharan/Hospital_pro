@@ -1,11 +1,61 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
+import random
+import datetime
+import string
+def generate_random_id():
+    prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
+    digits = ''.join(random.choices(string.digits, k=6))
+    return f"{prefix}{digits}"
+
+def generate_current_date():
+    return datetime.today().strftime('%Y-%m-%d')
+
+def collect_data():
+    patient_data = {
+        "Patient_ID": generate_random_id(),
+        "Patient_FName": Patient_Fname_input.text(),
+        "Patient_LName": Patient_lname_input.text(),
+        "Phone": Phone_number_input.text(),
+        "Blood_Type": Blood_group_input.text(),
+        "Email": email_input.text(),
+        "Gender": Gender_input.text(),
+        "Password": create_password_input.text(),
+        "Admission_Date": generate_current_date(),
+    }
+    print(patient_data)  # This is where you'd handle further processing (e.g., saving to a database)
+
+#create_button.clicked.connect(on_create_button_click)
+
+def on_create_button_click():
+    # Check if any field is empty
+    if not (Patient_Fname_input.text() and Patient_lname_input.text() and Phone_number_input.text() and 
+            Blood_group_input.text() and Gender_input.text() and email_input.text() and 
+            create_password_input.text() and confirm_password_input.text()):
+        space_button.setText("Input Error: All fields are required.")
+        return
+    
+    # Check if phone number is 10 digits
+    if len(Phone_number_input.text()) != 10 or not Phone_number_input.text().isdigit():
+        space_button.setText("Input Error:  Phone number must be 10 digits.")
+        return
+
+    # Check if passwords match
+    if create_password_input.text() != confirm_password_input.text():
+        space_button.setText("Input Error:  Passwords do not match.")
+        return
+    
+
+    #create_button.clicked.connect(collect_data)
+    collect_data()
+    space_button.setText("Success:  Account created successfully!")
+
 
 app = QApplication(sys.argv)
 window = QWidget()
 window.setWindowTitle('LOGIN PAGE')
-window.setGeometry(500, 500, 300, 200)
+window.setGeometry(100, 100, 1800, 900)
 main_layout = QHBoxLayout()
 
 login_layout = QVBoxLayout()
@@ -107,6 +157,7 @@ create_passworrd_layout = QHBoxLayout()
 create_password_label = QLabel('CreatePassword:')
 create_passworrd_layout.addWidget(create_password_label)
 create_password_input = QLineEdit()
+create_password_input.setEchoMode(QLineEdit.Password)
 create_password_input.setFixedSize(300, 20)
 create_passworrd_layout.addWidget(create_password_input)
 signup_layout.addLayout(create_passworrd_layout)
@@ -121,6 +172,12 @@ confirm_password_layout.addWidget(confirm_password_input)
 signup_layout.addLayout(confirm_password_layout)
 signup_layout.addSpacing(20)
 
+space_layout = QHBoxLayout()
+space_button = QLabel(" ")
+space_layout.addWidget(space_button)
+signup_layout.addLayout(space_layout)
+signup_layout.addSpacing(20)
+
 create_button_layout = QHBoxLayout()
 create_button = QPushButton("create")
 create_button_layout.addWidget(create_button)
@@ -133,6 +190,7 @@ main_layout.addStretch()
 main_layout.addLayout(signup_layout)
 main_layout.addStretch()
 
+create_button.clicked.connect(on_create_button_click)
 window.setLayout(main_layout)
 
 if __name__ == "__main__":
