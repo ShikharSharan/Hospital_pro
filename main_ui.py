@@ -6,6 +6,19 @@ from datetime import datetime
 import string
 #from email_validator import validate_email, EmailNotValidError
 import re
+from main_py import *
+
+def on_login_button_click():
+    patient_id = username_input.text()
+    password = password_input.text()
+
+    if not patient_id or not password:
+        space_button.setText("Input Error: Both fields are required.")
+        return
+
+    verify_login(patient_id, password)
+
+
 def generate_random_id():
     prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
     digits = ''.join(random.choices(string.digits, k=6))
@@ -38,6 +51,7 @@ def collect_data():
         "Admission_Date": generate_current_date(),
     }
     print(patient_data)
+    insert_data_into_redshift(patient_data)
 #create_button.clicked.connect(on_create_button_click)
 
 def on_create_button_click():
@@ -71,7 +85,6 @@ def on_create_button_click():
     
     #create_button.clicked.connect(collect_data)
     collect_data()
-    print("snheal")
     space_button.setText("Success:  Account created successfully!")
 
 
@@ -219,10 +232,10 @@ main_layout.addStretch()
 main_layout.addLayout(signup_layout)
 main_layout.addStretch()
 
-create_button.clicked.connect(on_create_button_click)
+create_button.clicked.connect(on_create_button_click) #signup here
+login_button.clicked.connect(on_login_button_click)  #login function here
 window.setLayout(main_layout)
 
 if __name__ == "__main__":
     window.show()
     sys.exit(app.exec_())
-
