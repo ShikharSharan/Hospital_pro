@@ -1,0 +1,5 @@
+host=hospital-management.cfcisvp0vy4x.eu-north-1.redshift.amazonaws.com
+port=5439
+dbname=dev
+user=snehal
+password=Khushi123
