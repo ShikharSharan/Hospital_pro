@@ -82,17 +82,20 @@ def verify_login(patient_id, password):
         result = cursor.fetchone()
 
         if result:
-            print("Login Successful!")
+            return True
         else:
-            print("Login Failed: Invalid Patient ID or Password.")
+            return False
 
     except Exception as e:
         print(f"Error verifying login: {e}")
+        return False
     finally:
         # Close the connection
         if conn:
             cursor.close()
             conn.close()
+
+
     
 
 
