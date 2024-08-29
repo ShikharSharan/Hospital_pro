@@ -7,16 +7,27 @@ import string
 #from email_validator import validate_email, EmailNotValidError
 import re
 from main_py import *
+from welcome_ui import create_after_login_page
 
 def on_login_button_click():
     patient_id = username_input.text()
     password = password_input.text()
 
     if not patient_id or not password:
-        space_button.setText("Input Error: Both fields are required.")
+        nortification_label.setText("Input Error: Both fields are required.")
         return
 
-    verify_login(patient_id, password)
+    if verify_login(patient_id, password):
+        print("yesssss")
+        nortification_label.setText("Login Successful!")
+        # Close the current login window
+        window.close()
+        # Launch the new welcome UI
+        welcome_window = create_after_login_page(patient_id)
+        welcome_window.show()
+        app.active_window = welcome_window
+    else:
+        nortification_label.setText("Login Failed: Invalid Patient ID or Password.")
 
 
 def generate_random_id():
@@ -120,6 +131,12 @@ password_layout.addWidget(password_input)
 
 login_layout.addLayout(password_layout)
 login_layout.addSpacing(40)
+
+nortification_layout = QHBoxLayout()
+nortification_label = QLabel("")
+nortification_layout.addWidget(nortification_label)
+login_layout.addLayout(nortification_layout)
+
 
 button_layout = QHBoxLayout()
 login_button = QPushButton("Login")
