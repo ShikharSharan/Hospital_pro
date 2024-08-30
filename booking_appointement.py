@@ -95,3 +95,48 @@ def past_appointments(Patient_ID):
         if conn:
             cursor.close()
             conn.close()
+
+######################################--MEDICAL---HISTORY##########################################################
+def generate_record_ID():
+    prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
+    digits = ''.join(random.choices(string.digits, k=6))
+    return f"RE{prefix}{digits}"
+
+def medical_history(Patient_ID,Allergies,Pre_conditions):
+    Record_ID = generate_record_ID
+    Patient_ID = Patient_ID
+    Allergies = Allergies
+    Pre_conditions = Pre_conditions
+
+    config = load_redshift_config()
+    
+    try:
+        conn = psycopg2.connect(
+        host = config['host'],
+        port = config['port'],
+        dbname = config['dbname'],
+        user = config['user'],
+        password = config['password']
+        )
+        cursor = conn.cursor()
+        
+        insert_medical_history= """
+        INSERT INTO user_data.MEDICAL_APPOINTMENTS
+        (RECORD_ID,PATIENT_ID,Allergies,Pre_conditions)
+        VALUES(%s,%s,%s,%s)
+        """
+        cursor.execute(insert_medical_history(Record_ID,Patient_ID,Allergies,Pre_conditions)
+            
+        )
+        conn.commit()
+        
+    except Exception as e:
+        print(f"Error inserting data into redshift.{e}")
+        
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+    
+    
+    
