@@ -1,6 +1,7 @@
 import random
 import string
 import psycopg2
+
 def generate_random_id():
     prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
     digits = ''.join(random.choices(string.digits, k=6))
@@ -60,6 +61,35 @@ def insert_data_into_redshift(Scheduled_date,Doctor_ID,Additional_comments,Patie
  
     except Exception as e:
         print(f"Error inserting data into Redshift: {e}")
+    finally:
+        # Close the connection
+        if conn:
+            cursor.close()
+            conn.close()
+            
+            
+def past_appointments(Patient_ID):
+    config = load_redshift_config()
+    
+    try:
+        conn = psycopg2.connect(
+            host=config['host'],
+            port=config['port'],
+            database=config['dbname'],
+            user=config['user'],
+            password=config['password']
+        )
+ 
+        cursor = conn.cursor()
+        cursor.execute("select * from user_data.NEW_APPOINTMENT where Patient_ID = %s",(Patient_ID,))
+    
+        result: tuple = cursor.fetchall()   
+        print(result)
+        conn.commit()
+        return result
+    
+    except Exception as e:
+        print(f"Error running query Redshift: {e}")
     finally:
         # Close the connection
         if conn:
