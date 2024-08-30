@@ -9,6 +9,7 @@ import re
 from main_py import *
 from welcome_ui import create_after_login_page
 
+#login button check
 def on_login_button_click():
     patient_id = username_input.text()
     password = password_input.text()
@@ -28,12 +29,13 @@ def on_login_button_click():
         app.active_window = welcome_window
     else:
         nortification_label.setText("Login Failed: Invalid Patient ID or Password.")
+        
+    # NEW PATIENT REGISTRATION
 
-
-def generate_random_id():
+def generate_patient_id():
     prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
     digits = ''.join(random.choices(string.digits, k=6))
-    return f"{prefix}{digits}"
+    return f"PT{prefix}{digits}"
 
 def generate_current_date():
     return datetime.today().strftime('%Y-%m-%d')
@@ -51,7 +53,7 @@ def collect_data():
     blood_group = Blood_group_input.currentText()
 
     patient_data = {
-        "Patient_ID": generate_random_id(),
+        "Patient_ID": generate_patient_id(),
         "Patient_FName": Patient_Fname_input.text(),
         "Patient_LName": Patient_lname_input.text(),
         "Phone": Phone_number_input.text(),
@@ -61,7 +63,7 @@ def collect_data():
         "Password": create_password_input.text(),
         "Admission_Date": generate_current_date(),
     }
-    print(patient_data)
+    #print(patient_data)
     insert_data_into_redshift(patient_data)
 #create_button.clicked.connect(on_create_button_click)
 
@@ -98,6 +100,7 @@ def on_create_button_click():
     collect_data()
     space_button.setText("Success:  Account created successfully!")
 
+##############################PATIENT---ACCOUNT---CREATED----SUCCESSFULLY########################################################################
 
 app = QApplication(sys.argv)
 window = QWidget()
